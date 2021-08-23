@@ -1,12 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { FlatList, Text, View, useWindowDimensions, TouchableOpacity } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { FlatList, Text, View, useWindowDimensions } from 'react-native'
 import Card from '../Card/Card';
 import style from './Carousel.style';
-import Paging from '../Paging/Paging';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Carousel({cards, cardsRef, index, onScroll}) {
 
     const {width} = useWindowDimensions();
+    const [value, setValue] = useState("");
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const lastViewedIndex = await AsyncStorage.getItem(
+                    "@lastViewedIndex"
+                );
+                if (lastViewedIndex) {
+                    setValue(lastViewedIndex);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        })();
+    }, []);
 
     return (
         <View style={style.screen}>
@@ -14,6 +30,7 @@ function Carousel({cards, cardsRef, index, onScroll}) {
             cards ? (
             <View style={style.carousel}>
                 <FlatList 
+                    initialNumToRender={value}
                     data={cards}
                     horizontal
                     pagingEnabled

@@ -5,7 +5,6 @@ import style from './Paging.style';
 function Paging({page, total}) {
 
     function handleStyle(dot) {
-        console.log(dot.id, page);
         if(dot.id == page) return style.whiteDot;
         return style.blackDot;
     }

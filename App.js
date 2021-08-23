@@ -10,7 +10,6 @@ export default function App() {
 
     const [page, setPage] = useState(0);
     const [cards, setCards] = useState([]);
-
     const cardsRef = useRef(0);
     const [index, setIndex] = useState(0);    
     
@@ -19,19 +18,19 @@ export default function App() {
             try {
                 await AsyncStorage.setItem("@lastViewedIndex", index.toString());
             } catch(err){
-                alert(err);
+                console.log(err);
             }
         }
     };
 
     const onScroll = useRef(({viewableItems}) => {
-        setIndex(viewableItems[0].index)
+        setIndex(viewableItems ? viewableItems[0].index : 0)
     }).current;
 
 
     function scrollNext(){
         if (index < cards.length - 1) {
-            cardsRef.current.scrollToIndex({ index: index + 1 });
+            cardsRef.current.scrollToIndex({ index: index + 1, animated: true });
         }
         if (index >= 0) {
             saveIndex(index + 1);
@@ -47,7 +46,7 @@ export default function App() {
         }
     }
 
-    async function getData(){
+    async function getCards(){
         try{
             const {data} = await axios.get('https://pzzlc-hallenge-data.vercel.app/api');
             await setCards(data);
@@ -78,7 +77,7 @@ export default function App() {
     }
 
     useEffect(() => {
-        getData();
+        getCards();
     }, [page]);
 
     return (
